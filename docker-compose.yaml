@@ -52,5 +52,3 @@ volumes:
     name: dockerbasics_compose_db_volume
   app_volume:
     name: images
-  ollama:
-    external: true

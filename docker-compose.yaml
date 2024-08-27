@@ -1,0 +1,56 @@
+services:
+  db:
+    image: postgres:16.4-alpine
+    container_name: dockerbasics_compose_db
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: demo_db
+    volumes:
+      - db_volume:/var/lib/postgresql/data
+    networks: &default-networks
+      - common_net
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "psql -U user -d demo_db -c 'SELECT 1'"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+
+  app:
+    image: dockerbasics:v0.1
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: dockerbasics_compose_app
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USER: user
+      DB_PASSWORD: password
+      DB_NAME: demo_db
+    volumes:
+      - app_volume:/images
+    networks: *default-networks
+    ports:
+      - "8080:8080"
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "localhost:8080/"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+    depends_on:
+      db:
+        condition: service_healthy
+
+networks:
+  common_net:
+    name: dockerbasics_compose_net
+
+volumes:
+  db_volume:
+    name: dockerbasics_compose_db_volume
+  app_volume:
+    name: images
+  ollama:
+    external: true

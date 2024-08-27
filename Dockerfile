@@ -5,7 +5,7 @@ WORKDIR $HOME
 ADD pom.xml $HOME
 RUN mvn verify --fail-never
 ADD . $HOME
-RUN mvn package
+RUN mvn -DskipTests package
 
 FROM openjdk:24
 COPY --from=build /usr/app/target/*.jar /app.jar

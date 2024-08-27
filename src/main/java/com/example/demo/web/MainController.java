@@ -1,15 +1,15 @@
 package com.example.demo.web;
 
+import com.example.demo.dto.FileInfoDto;
 import com.example.demo.service.DataStorageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 
 @RestController
@@ -34,4 +34,15 @@ public class MainController {
         return "File uploaded. File size: " + file.getSize() + " bytes";
     }
 
+    @Operation(description = "Получение списка файлов")
+    @GetMapping("/files")
+    public List<FileInfoDto> getFiles() {
+        return service.getAllFiles();
+    }
+
+    @Operation(description = "Удаление файла")
+    @DeleteMapping("/files/{id}")
+    public String deleteFile(@PathVariable(name = "id") Integer id) {
+        return service.deleteFile(id);
+    }
 }
